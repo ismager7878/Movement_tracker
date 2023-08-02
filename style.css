@@ -5,6 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
+  
   background-color: #242424;
 
   font-synthesis: none;
@@ -15,6 +16,7 @@
 }
 
 body {
+  font-weight: bold;
   margin: 0;
   display: flex;
   min-width: 320px;
@@ -24,8 +26,15 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  margin-top: 0px;
+  margin: 0;
   font-size: 50px;
+}
+
+.subtitle {
+  margin-top: 0;
+  font-size: 15px;
+  color: #4a4a4a;
+  text-decoration-line: none;
 }
 
 #app {
