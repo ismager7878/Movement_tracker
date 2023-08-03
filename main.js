@@ -1,18 +1,17 @@
 import './style.css'
 import OBR from '@owlbear-rodeo/sdk'
 import { setupContextMenu } from './contextMenu'
-import { setupMovementTracker } from './movementTracker'
+import { setupMovementTracker, setUpStateToggle } from './movementTracker'
 
-
-const buttons = document.querySelectorAll('button')
-
-for(let button of buttons){
-  console.log(button)
+const hello = async (e) => {
+  console.log('heej')
 }
 
+
 OBR.onReady(()=>{
+  setUpStateToggle(document.querySelector('#toggle'))
   setupContextMenu();
-  setupMovementTracker('33');
+  setupMovementTracker(document.querySelector('#trackerlist'));
 })
 
 

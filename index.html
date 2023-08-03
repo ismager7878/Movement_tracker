@@ -2,32 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <link href="toggleSwitch.css" rel="stylesheet">
+    <title>Movement Tracker</title>
   </head>
   <body>
     <div id="app">
       <div>
-        <h1>Movement Tracker</h1>
+        <div class="header">
+          <div style="width: 240px;">
+            <h1>Movement Tracker</h1>
+          </div>
+          
+          <label class="switch tooltip">
+            <span class="tooltiptext">Enable/Disable</span>
+            <input type="checkbox" id="toggle">
+            <span class="slider round"></span>
+          </label>
+          
+        </div>
         <p class="subtitle">Made by: Andreas Barbre</p>
-        <ul id="trackerlist">
-          <li>
-            <p>Berny</p>
-            <input class='movementInput'>
-            <button class="tooltip">
-              <span class="tooltiptext">
-                Undo
-              </span>
-              <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 9V15M4 15H10M4 15C6.32744 12.9114 8.48287 10.5468 11.7453 10.0878C13.6777 9.81593 15.6461 10.1794 17.3539 11.1234C19.0617 12.0675 20.4164 13.5409 21.2139 15.3218" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-          <div>
-
-            </div>
-          </li>
-        </ul>
+        <div id="trackerlist">
+        </div>
       </div>
     </div>
     <script type="module" src="/main.js"></script>

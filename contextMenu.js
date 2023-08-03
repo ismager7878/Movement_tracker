@@ -1,5 +1,6 @@
 import OBR from "@owlbear-rodeo/sdk";
 
+
 const ID = 'com.github.ismager7878'
 
 export function setupContextMenu() {
@@ -27,16 +28,15 @@ export function setupContextMenu() {
             },      
         ],
         onClick(context) {
-            console.log(context)
             const addMovementTracker = context.items.every(x => x.metadata[`${ID}/metadata`] === undefined)
             if(addMovementTracker){
-                const speed = window.prompt("Enter movement speed");
                 OBR.scene.items.updateItems(context.items, (items) => {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
-                            speed: speed,
-                            movement: 0,
+                            speed: '',
+                            usedMovement: 0,
                             postionHistory: [],
+                            
                         }
                     }
                 })

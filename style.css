@@ -18,16 +18,16 @@
 body {
   font-weight: bold;
   margin: 0;
-  display: flex;
   min-width: 320px;
-  min-height: 100vh;
+  padding: 2rem;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
   margin: 0;
-  font-size: 50px;
+  font-size: 40px;
+
 }
 
 .subtitle {
@@ -38,24 +38,20 @@ h1 {
 }
 
 #app {
-  margin: 0 auto;
-  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
-ul{
-  list-style-type: none;
-  padding-left: 0;
-  flex-direction: row;
-}
-
-li{
+#player{
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 button{
   border: none;
   background-color: #24242400;
-  border-radius: 20px;
+  border-radius: 15px;
   padding: 0;
 }
 button:hover{
@@ -64,7 +60,16 @@ button:hover{
 button:active > svg > path{
   stroke: #bb99ff;
 }
-
+button:active > svg > g{
+  stroke: #bb99ff;
+}
+.reset{
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .tooltip{
   position: relative;
   display: flex;
@@ -91,3 +96,47 @@ button:active > svg > path{
   opacity: 1;
 }
 
+input{
+  margin: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  border-style: none;
+  text-align: center;
+  font-weight: bold;
+  font-size: 17px;
+  color: #e2e2e2;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.movement{
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+}
+
+.movement > div {
+  padding: 0 3px 0 5px;
+}
+
+hr.divider {
+  border-top: 3px dotted #bbbbbb3b;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
