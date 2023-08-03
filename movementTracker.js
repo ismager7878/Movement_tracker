@@ -1,6 +1,6 @@
 import OBR from "@owlbear-rodeo/sdk";
 
-const ID = 'com.github.ismager7878'
+const ID = 'io.github.ismager7878/Movement_tracker/'
 
 export async function setupMovementTracker(element) {
 
@@ -110,7 +110,7 @@ export const setUpStateToggle = async (element) => {
 
     await OBR.room.setMetadata(
         {
-            "com.github.ismager7878/metadata": {
+            "io.github.ismager7878/Movement_tracker/": {
                 state: false,
             },
         }
@@ -122,7 +122,7 @@ export const setUpStateToggle = async (element) => {
         if(playerRole == "GM"){
             await OBR.room.setMetadata(
                 {
-                    "com.github.ismager7878/metadata": {
+                    "io.github.ismager7878/Movement_tracker/": {
                         state: callback.target.checked,
                     },
                 })

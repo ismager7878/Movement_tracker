@@ -1,7 +1,7 @@
 import OBR from "@owlbear-rodeo/sdk";
 
 
-const ID = 'com.github.ismager7878'
+const ID = 'io.github.ismager7878/Movement_tracker/'
 
 export function setupContextMenu() {
     OBR.contextMenu.create({
