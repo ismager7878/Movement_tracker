@@ -99,7 +99,6 @@ export async function setupMovementTracker(element) {
     
     
     OBR.scene.items.onChange( async (items) => {
-        await snapCharacterToGrid(items)
         renderMovementTrackerList(items)
     })
     renderMovementTrackerList(await OBR.scene.items.getItems())
