@@ -1,9 +1,9 @@
 {
-    "name": "Movement Tracker",
+    "name": "Movement Tracker Dev",
     "version": "1.0.0",
     "manifest_version": 1,
     "action": {
-      "title": "Movement Tracker",
+      "title": "Movement Tracker Dev",
       "icon": "/assets/extension_icon.svg",
       "popover": "/",
       "height": 600,
