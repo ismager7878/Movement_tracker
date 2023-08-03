@@ -3,6 +3,23 @@ import OBR from "@owlbear-rodeo/sdk";
 const ID = 'com.github.ismager7878'
 
 export async function setupMovementTracker(element) {
+
+    const snapCharacterToGrid = async (items) => {
+        for(let x of items){
+            if(x.layer == 'CHARACTER'){
+                const position = x.position
+                const snapPosition = await OBR.scene.grid.snapPosition(position, true, false)
+                if(position != snapPosition){
+                    OBR.scene.items.updateItems((item)=> item.id == x.id, (items) => {
+                        for(let item of items){
+                            item.position = snapPosition
+                        }
+                    })
+                }
+            }
+        }
+    }
+
     const renderMovementTrackerList = async (items) => {
         let trackedItems = []
         let domElement = ''
@@ -81,7 +98,10 @@ export async function setupMovementTracker(element) {
     }
     
     
-    OBR.scene.items.onChange(renderMovementTrackerList)
+    OBR.scene.items.onChange( async (items) => {
+        await snapCharacterToGrid(items)
+        renderMovementTrackerList(items)
+    })
     renderMovementTrackerList(await OBR.scene.items.getItems())
 }
 
