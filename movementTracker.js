@@ -4,6 +4,30 @@ const ID = 'com.abarbre.movement_tracker'
 
 export async function setupMovementTracker(element) {
 
+    let fistRender = true
+
+    const addInitialItemsToRoom = async (items) => {
+        const metadata = {
+            "com.abarbre.movement_tracker/metadata":{
+                state: false,
+                characters: []
+            }
+        }
+        for(let item of items){
+            if(item.metadata[`${ID}/metadata`] !== undefined){
+                metadata[`${ID}/metadata`].characters.push(
+                    {
+                        id: item.id,
+                        usedMovement: 0,
+                        positionHistory: [item.position],
+                    }
+                )
+            }
+        }
+        await OBR.room.setMetadata(metadata)
+        fistRender = false
+    }
+
     const recordPosition = async (items) =>  {
         const roomMetadata = await OBR.scene.getMetadata()
         const state = roomMetadata[`${ID}/metadata`].state
@@ -104,9 +128,12 @@ export async function setupMovementTracker(element) {
     
     
     OBR.scene.items.onChange((items) => {
+        if(fistRender)
+        {
+            addInitialItemsToRoom(items)
+        }
         renderMovementTrackerList(items)
     })
-    renderMovementTrackerList(await OBR.scene.items.getItems())
 }
 
 
@@ -132,6 +159,7 @@ export const setUpStateToggle = async (element) => {
         const metadata = data[`${ID}/metadata`]
         element.checked = metadata.state
         console.log(`The state is: ${metadata.state}`)
+        console.log(metadata)
     }
 
     OBR.room.onMetadataChange(updateStateToggle)
@@ -140,13 +168,12 @@ export const setUpStateToggle = async (element) => {
 
   export const setupRoomMetadata = async () => {
     await OBR.room.setMetadata(
-        {
-            "com.abarbre.movement_tracker/metadata": {
-                state: false,
-                characters: [],
-            },
-        }
-    )
-    console.log(await OBR.room.getMetadata())
+            {
+                "com.abarbre.movement_tracker/metadata": {
+                    state: false,
+                    characters: [],
+                },
+            }
+        )
   }
   

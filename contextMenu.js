@@ -27,27 +27,37 @@ export function setupContextMenu() {
                 }
             },      
         ],
-        onClick(context) {
+        async onClick(context) {
+            const roomMetadata = await OBR.room.getMetadata()
             const addMovementTracker = context.items.every(x => x.metadata[`${ID}/metadata`] === undefined)
             if(addMovementTracker){
                 OBR.scene.items.updateItems(context.items, (items) => {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
                             speed: '',
-                            usedMovement: 0,
-                            positionHistory: [item.position],
                         }
                     }
                 })
+                for(let item of context.items){
+                    console.log('Character added')
+                    roomMetadata[`${ID}/metadata`].characters.push({
+                        id: item.id,
+                        usedMovement: 0,
+                        positionHistory: [item.position],
+                    })
+                }
             }else{
                 const items = context.items
                 OBR.scene.items.updateItems(context.items, (items) =>{
                     for (let item of items){
+                        console.log(roomMetadata[`${ID}/metadata`].characters.filter((character) => character.id == item.id))
+                        delete roomMetadata[`${ID}/metadata`].characters.filter((character) => character.id == item.id)
                         delete item.metadata[`${ID}/metadata`]
                     }
                 })  
             }
-
+            
+            await OBR.room.setMetadata(roomMetadata);
             
         }
     })

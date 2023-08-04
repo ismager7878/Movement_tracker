@@ -8,8 +8,7 @@ const hello = async (e) => {
 }
 
 
-OBR.onReady(async ()=>{
-  await setupRoomMetadata();
+OBR.onReady(()=>{
   setUpStateToggle(document.querySelector('#toggle'))
   setupContextMenu();
   setupMovementTracker(document.querySelector('#trackerlist'));
