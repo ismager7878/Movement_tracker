@@ -112,31 +112,20 @@ export async function setupMovementTracker(element) {
 
 export const setUpStateToggle = async (element) => {
 
-    await OBR.scene.setMetadata(
-        {
-            "com.abarbre.movement_tracker/metadata": {
-                state: false,
-            },
-        }
-    )
-
     const toggleState = async (callback) => {
+        const metadata = await OBR.room.getMetadata()
 
         const playerRole = await OBR.player.getRole()
         if(playerRole == "GM"){
-            await OBR.scene.setMetadata(
-                {
-                    "com.abarbre.movement_tracker/metadata": {
-                        state: callback.target.checked,
-                    },
-                })
+            metadata[`${ID}/metadata`].state = callback.target.checked
         }
         else{
             console.log('gello')
-            const metadata = await OBR.scene.getMetadata()
             OBR.notification.show("You shall not touch, the GM's button", "WARNING")
             element.checked = metadata[`${ID}/metadata`].state
         }
+
+        await OBR.room.setMetadata(metadata)
     }
 
     const updateStateToggle = (data) =>{
@@ -145,7 +134,19 @@ export const setUpStateToggle = async (element) => {
         console.log(`The state is: ${metadata.state}`)
     }
 
-    OBR.scene.onMetadataChange(updateStateToggle)
+    OBR.room.onMetadataChange(updateStateToggle)
     element.addEventListener("input", toggleState)
+  }
+
+  export const setupRoomMetadata = async () => {
+    await OBR.room.setMetadata(
+        {
+            "com.abarbre.movement_tracker/metadata": {
+                state: false,
+                characters: [],
+            },
+        }
+    )
+    console.log(await OBR.room.getMetadata())
   }
   

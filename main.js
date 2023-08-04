@@ -1,7 +1,7 @@
 import './style.css'
 import OBR from '@owlbear-rodeo/sdk'
 import { setupContextMenu } from './contextMenu'
-import { setupMovementTracker, setUpStateToggle } from './movementTracker'
+import { setupMovementTracker, setUpStateToggle, setupRoomMetadata } from './movementTracker'
 
 const hello = async (e) => {
   console.log('heej')
@@ -9,8 +9,9 @@ const hello = async (e) => {
 
 
 OBR.onReady(async ()=>{
+  await setupRoomMetadata();
   setUpStateToggle(document.querySelector('#toggle'))
-  await setupContextMenu();
+  setupContextMenu();
   setupMovementTracker(document.querySelector('#trackerlist'));
 })
 
