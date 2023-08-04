@@ -4,6 +4,11 @@ import OBR from "@owlbear-rodeo/sdk";
 const ID = 'com.abarbre.movement_tracker'
 
 export function setupContextMenu() {
+    OBR.scene.setMetadata({
+        "com.abarbre.movement_tracker/metadata": {
+            characters: [],
+        },
+    })
     OBR.contextMenu.create({
         id: `${ID}/context-menu`,
         icons: [
@@ -27,21 +32,23 @@ export function setupContextMenu() {
                 }
             },      
         ],
-        onClick(context) {
+        async onClick(context) {
             const addMovementTracker = context.items.every(x => x.metadata[`${ID}/metadata`] === undefined)
             if(addMovementTracker){
                 OBR.scene.items.updateItems(context.items, (items) => {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
                             speed: '',
-                            usedMovement: 0,
-                            postionHistory: [],
-                            
                         }
                     }
+                    const id = item.id
+                    OBR.scene.setMetadata({
+                        "com.abarbre.movement_tracker/metadata": {
+                            Characters
+                        },
+                    })
                 })
             }else{
-                const items = context.items
                 OBR.scene.items.updateItems(context.items, (items) =>{
                     for (let item of items){
                         delete item.metadata[`${ID}/metadata`]

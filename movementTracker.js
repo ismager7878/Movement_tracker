@@ -4,22 +4,27 @@ const ID = 'com.abarbre.movement_tracker'
 
 export async function setupMovementTracker(element) {
 
-    const snapCharacterToGrid = async (items) => {
-        for(let x of items){
-            if(x.layer == 'CHARACTER'){
-                const position = x.position
-                const snapPosition = await OBR.scene.grid.snapPosition(position, true, false)
-                if(position != snapPosition){
-                    OBR.scene.items.updateItems((item)=> item.id == x.id, (items) => {
+    const recordPosition = async (items) =>  {
+        const roomMetadata = await OBR.scene.getMetadata()
+        const state = roomMetadata[`${ID}/metadata`].state
+        if(!state){
+            return
+        }
+        for(let item of items){
+            if(item.metadata[`${ID}/metadata`] !== undefined && item.layer == "CHARACTER"){
+                const speed = item.metadata[`${ID}/metadata`].speed
+                const lastPosition = metadata.positionHistory[metadata.positionHistory.length - 1]
+                if(item.position.x != lastPosition.x && item.position.y != lastPosition.y){
+                    OBR.scene.items.updateItems((x) => x.id == item.id, (items) => {
                         for(let item of items){
-                            item.position = snapPosition
+                            item.metadata[`${ID}/metadata`].positionHistory.push(item.position)
+                            console.log('Postion Added')
                         }
                     })
                 }
-            }
+            }  
         }
     }
-
     const renderMovementTrackerList = async (items) => {
         let trackedItems = []
         let domElement = ''
@@ -98,7 +103,7 @@ export async function setupMovementTracker(element) {
     }
     
     
-    OBR.scene.items.onChange( async (items) => {
+    OBR.scene.items.onChange((items) => {
         renderMovementTrackerList(items)
     })
     renderMovementTrackerList(await OBR.scene.items.getItems())
@@ -107,7 +112,7 @@ export async function setupMovementTracker(element) {
 
 export const setUpStateToggle = async (element) => {
 
-    await OBR.room.setMetadata(
+    await OBR.scene.setMetadata(
         {
             "com.abarbre.movement_tracker/metadata": {
                 state: false,
@@ -119,7 +124,7 @@ export const setUpStateToggle = async (element) => {
 
         const playerRole = await OBR.player.getRole()
         if(playerRole == "GM"){
-            await OBR.room.setMetadata(
+            await OBR.scene.setMetadata(
                 {
                     "com.abarbre.movement_tracker/metadata": {
                         state: callback.target.checked,
@@ -128,7 +133,7 @@ export const setUpStateToggle = async (element) => {
         }
         else{
             console.log('gello')
-            const metadata = await OBR.room.getMetadata()
+            const metadata = await OBR.scene.getMetadata()
             OBR.notification.show("You shall not touch, the GM's button", "WARNING")
             element.checked = metadata[`${ID}/metadata`].state
         }
@@ -140,7 +145,7 @@ export const setUpStateToggle = async (element) => {
         console.log(`The state is: ${metadata.state}`)
     }
 
-    OBR.room.onMetadataChange(updateStateToggle)
+    OBR.scene.onMetadataChange(updateStateToggle)
     element.addEventListener("input", toggleState)
   }
   
