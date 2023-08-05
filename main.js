@@ -8,7 +8,7 @@ const hello = async (e) => {
 }
 
 
-OBR.onReady(async ()=>{
+OBR.onReady(()=>{
   setUpStateToggle(document.querySelector('#toggle'))
   setupContextMenu();
   setupMovementTracker(document.querySelector('#trackerlist'));
