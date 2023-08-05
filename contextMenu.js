@@ -31,6 +31,16 @@ export function setupContextMenu() {
             const roomMetadata = await OBR.room.getMetadata()
             const addMovementTracker = context.items.every(x => x.metadata[`${ID}/metadata`] === undefined)
             if(addMovementTracker){
+                for(let item of context.items){
+                    
+                    roomMetadata[`${ID}/metadata`].characters.push({
+                        id: item.id,
+                        usedMovement: 0,
+                        positionHistory: [item.position],
+                    })
+                    
+                }
+                await OBR.room.setMetadata(roomMetadata);
                 OBR.scene.items.updateItems(context.items, (items) => {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
@@ -38,27 +48,19 @@ export function setupContextMenu() {
                         }
                     }
                 })
-                for(let item of context.items){
-                    console.log('Character added')
-                    roomMetadata[`${ID}/metadata`].characters.push({
-                        id: item.id,
-                        usedMovement: 0,
-                        positionHistory: [item.position],
-                    })
-                }
+                
             }else{
                 const items = context.items
                 OBR.scene.items.updateItems(context.items, (items) =>{
                     for (let item of items){
-                        console.log(roomMetadata[`${ID}/metadata`].characters.filter((character) => character.id == item.id))
-                        delete roomMetadata[`${ID}/metadata`].characters.filter((character) => character.id == item.id)
+                        const characterIndex = roomMetadata[`${ID}/metadata`].characters.findIndex((character) => character.id == item.id)
+                        delete roomMetadata[`${ID}/metadata`].characters.splice(characterIndex, 1)
                         delete item.metadata[`${ID}/metadata`]
+                        OBR.room.setMetadata(roomMetadata);
                     }
                 })  
             }
-            
-            await OBR.room.setMetadata(roomMetadata);
-            
+            console.log('Character added')
         }
     })
 }
