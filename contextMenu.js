@@ -36,7 +36,7 @@ export function setupContextMenu() {
                     roomMetadata[`${ID}/metadata`].characters.push({
                         id: item.id,
                         usedMovement: 0,
-                        positionHistory: [item.position],
+                        positionHistory: [],
                     })
                     
                 }
@@ -44,7 +44,7 @@ export function setupContextMenu() {
                 OBR.scene.items.updateItems(context.items, (items) => {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
-                            speed: '',
+                            speed: 30,
                         }
                     }
                 })
@@ -54,7 +54,7 @@ export function setupContextMenu() {
                 OBR.scene.items.updateItems(context.items, (items) =>{
                     for (let item of items){
                         const characterIndex = roomMetadata[`${ID}/metadata`].characters.findIndex((character) => character.id == item.id)
-                        delete roomMetadata[`${ID}/metadata`].characters.splice(characterIndex, 1)
+                        roomMetadata[`${ID}/metadata`].characters.splice(characterIndex, 1)
                         delete item.metadata[`${ID}/metadata`]
                         OBR.room.setMetadata(roomMetadata);
                     }
