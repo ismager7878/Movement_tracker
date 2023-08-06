@@ -23,7 +23,6 @@ const calculateFeet = async (oldPosition, newPosition) => {
     const dpi = await OBR.scene.grid.getDpi()
     const scale = await OBR.scene.grid.getScale()
 
-    console.log(direction +','+ dpi +','+ scale.parsed.multiplier)
     return (direction/dpi)*scale.parsed.multiplier
 
 }
@@ -39,6 +38,9 @@ export async function setupMovementTracker(element) {
             return
         }
         fistRender = false
+        if ((await OBR.player.getRole()) == "PLAYER"){
+            return
+        }
         const metadata = {
             "com.abarbre.movement_tracker/metadata":{
                 state: false,
@@ -52,13 +54,12 @@ export async function setupMovementTracker(element) {
                         id: item.id,
                         usedMovement: 0,
                         positionHistory: [item.position],
+                        isUndo: false
                     }
                 )
             }
         }
-        console.log(metadata)
         await OBR.room.setMetadata(metadata)
-        console.log('set up done')
         
     }
 
@@ -72,12 +73,21 @@ export async function setupMovementTracker(element) {
             if(item.metadata[`${ID}/metadata`] !== undefined && item.layer == "CHARACTER"){
                 const itemRoomIndex = getItemIndex(roomMetadata, item)
                 const itemRoomData = roomMetadata.characters[itemRoomIndex]
+
+                if(itemRoomData.isUndo){
+                    itemRoomData.isUndo = false
+                    metadata[`${ID}/metadata`].characters[itemRoomIndex] = itemRoomData
+                    await OBR.room.setMetadata(metadata)
+                    return
+                }
+
                 const lastPosition = itemRoomData.positionHistory[itemRoomData.positionHistory.length - 1]
 
                 if(item.position.x != lastPosition.x || item.position.y != lastPosition.y){
                     const distance = await calculateFeet(lastPosition, item.position)
 
                     console.log(`${item.name}'s postion updated`)
+                    console.log(itemRoomData.isUndo)
                     if(itemRoomData.usedMovement + distance > item.metadata[`${ID}/metadata`].speed){
                         OBR.scene.items.updateItems((x)=>x.id == item.id, (items)=>{
                             for(let i of items){
@@ -87,6 +97,7 @@ export async function setupMovementTracker(element) {
                         OBR.notification.show(`You don't have enough movement for that, you have ${item.metadata[`${ID}/metadata`].speed - itemRoomData.usedMovement}ft. left`, "WARNING") 
                         return                     
                     }
+                    itemRoomData.isUndo = false
                     itemRoomData.positionHistory.push(item.position)
                     itemRoomData.usedMovement += await calculateFeet(lastPosition, item.position)
                     metadata[`${ID}/metadata`].characters[itemRoomIndex] = itemRoomData
@@ -100,6 +111,7 @@ export async function setupMovementTracker(element) {
         let trackedItems = []
         let domElement = ''
         const roomMetadata = await getRoomMetadata()
+        console.log(roomMetadata)
         for(let item of items){
             if(item.metadata[`${ID}/metadata`] !== undefined){
                 const itemRoomData = roomMetadata.characters.filter((x)=> x.id == item.id)[0]
@@ -167,45 +179,46 @@ export async function setupMovementTracker(element) {
                         }
                     }   
                 })
-                console.log(e.target.value)
             }
             const resetMovement = async () => {
                 const metadata = await OBR.room.getMetadata()
+                const roomData = metadata[`${ID}/metadata`]
                 const items = await OBR.scene.items.getItems((item) => item.id === trackedItem.id)
                 for(let item of items){
-                    console.log(item)
                     if(item.metadata[`${ID}/metadata`] !== undefined){
-                        const itemIndex = getItemIndex(roomMetadata, item)
-                        roomMetadata.characters[itemIndex].usedMovement = 0
-                        roomMetadata.characters[itemIndex].positionHistory = [item.position]
+                        const itemIndex = getItemIndex(roomData, item)
+                        roomData.characters[itemIndex].usedMovement = 0
+                        roomData.characters[itemIndex].positionHistory = [item.position]
                     }
                 }
-                metadata[`${ID}/metadata`] = roomMetadata
-                console.log(metadata)
+                metadata[`${ID}/metadata`] = roomData
                 await OBR.room.setMetadata(metadata)
                 renderMovementTrackerList(await OBR.scene.items.getItems((x) => x.metadata[`${ID}/metadata`] !== undefined))
             }
 
-            const undoMovement = async (e) => {
+            const undoMovement = async () => {
                 const metadata = await OBR.room.getMetadata()
+                const roomData = metadata[`${ID}/metadata`]
                 const items = await OBR.scene.items.getItems((item) => item.id === trackedItem.id) 
                 for(let item of items){
-                    console.log(item)
                     if(item.metadata[`${ID}/metadata`] !== undefined){
                         const itemIndex = getItemIndex(roomMetadata, item)
-                        const roomCharacterData = metadata[`${ID}/metadata`].characters[itemIndex]              
-                        if(roomCharacterData.positionHistory >= 1){
+                        const roomCharacterData = roomData.characters[itemIndex]         
+                        if(roomCharacterData.positionHistory.length <= 1){
                             return
                         }
-                        OBR.scene.items.updateItems(items, (items) => {
+                        roomCharacterData.isUndo = true
+                        const lastPosition = roomCharacterData.positionHistory.pop()
+                        roomCharacterData.usedMovement -= await calculateFeet(lastPosition, roomCharacterData.positionHistory[roomCharacterData.positionHistory.length - 1])
+                        metadata[`${ID}/metadata`].characters[itemIndex] = roomCharacterData
+                        await OBR.room.setMetadata(metadata)
+                        await OBR.scene.items.updateItems((item) => item.id === trackedItem.id, (items) => {
                             for(let i of items){
-                                i.position = roomCharacterData.usedMovement[roomCharacterData.length - 2]
+                                i.position = roomCharacterData.positionHistory[roomCharacterData.positionHistory.length - 1]
                             }
                         })
-                        roomCharacterData.usedMovement.pop()
                     }
                 }
-                console.log(metadata)
                 
             }
             element.querySelector(`#reset${n}`).addEventListener("click", resetMovement)
@@ -222,7 +235,7 @@ export async function setupMovementTracker(element) {
             console.log('init load')
             addInitialItemsToRoom(items)
         }
-        await recordPosition(items);
+            await recordPosition(items);
         renderMovementTrackerList(items)
         
     })
@@ -230,7 +243,10 @@ export async function setupMovementTracker(element) {
 
 
 export const setUpStateToggle = async (element) => {
+    const meta = await OBR.room.getMetadata()
 
+    element.checked = meta[`${ID}/metadata`].state
+    console.log(meta[`${ID}/metadata`].characters)
     const toggleState = async (callback) => {
         const metadata = await OBR.room.getMetadata()
 
