@@ -36,7 +36,10 @@ export function setupContextMenu() {
                     roomMetadata[`${ID}/metadata`].characters.push({
                         id: item.id,
                         usedMovement: 0,
-                        positionHistory: [],
+                        usedMovementBuffer: 0,
+                        positionHistory: [item.position],
+                        positionHistoryBuffer: [],
+                        isUndo: false
                     })
                     
                 }
@@ -45,6 +48,7 @@ export function setupContextMenu() {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
                             speed: 30,
+                            toChange: 0,
                         }
                     }
                 })
