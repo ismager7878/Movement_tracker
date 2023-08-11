@@ -39,7 +39,8 @@ export function setupContextMenu() {
                         usedMovementBuffer: 0,
                         positionHistory: [item.position],
                         positionHistoryBuffer: [],
-                        isUndo: false
+                        isUndo: false,
+                        reset: false
                     })
                     
                 }
@@ -48,7 +49,6 @@ export function setupContextMenu() {
                     for (let item of items){
                         item.metadata[`${ID}/metadata`] = {
                             speed: 30,
-                            toChange: 0,
                         }
                     }
                 })
