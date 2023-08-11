@@ -6,33 +6,36 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   
-  background-color: #242424;
+  background-color: #1c1c29;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
   font-weight: bold;
   margin: 0;
-  min-width: 320px;
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+p {
+  font-size: 13px;
 }
 
 h1 {
-  font-size: 3.2em;
   line-height: 1.1;
   margin: 0;
-  font-size: 40px;
-
+  font-size: 22px;
+  width: fit-content;
 }
 
 .subtitle {
   margin-top: 0;
-  font-size: 15px;
+  font-size: 12px;
   color: #4a4a4a;
   text-decoration-line: none;
 }
@@ -49,23 +52,27 @@ h1 {
   justify-content: space-between;
 }
 button{
+  cursor: pointer;
   border: none;
   background-color: #24242400;
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 0;
 }
 button:hover{
   background-color: #5e5e5e5b;
 }
-button:active > svg > path{
+button.spell:active > svg{
+  fill: #bb99ff; 
+}
+button.undo:active > svg > path{
   stroke: #bb99ff;
 }
 button:active > svg > g{
   stroke: #bb99ff;
 }
 .reset{
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,14 +104,15 @@ button:active > svg > g{
 }
 
 input{
+  cursor:text;
   margin: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
   border-style: none;
   text-align: center;
   font-weight: bold;
-  font-size: 17px;
+  font-size: 13px;
   color: #e2e2e2;
 }
 input::-webkit-outer-spin-button,
@@ -119,20 +127,22 @@ input[type=number] {
 }
 
 .movement{
-  font-size: 17px;
+  font-size: 13px;
   display: flex;
   align-items: center;
 }
 
 .movement > div {
-  padding: 0 3px 0 5px;
+  padding: 0 1.5px 0 2.5px;
 }
 
 hr.divider {
-  border-top: 3px dotted #bbbbbb3b;
+  border-top: 2px dotted #bbbbbb3b;
   border-bottom: none;
   border-left: none;
   border-right: none;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .header {
@@ -140,3 +150,39 @@ hr.divider {
   align-items: center;
   justify-content: space-between;
 }
+
+.spell {
+  padding-top: 1.5%;
+  margin-right: 1%;
+  height: 20px;
+  width: 20px;
+}
+
+.name{
+  width: 73px;
+  overflow: hidden;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #242424;
+  -webkit-box-shadow: none;
+  
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bb99ffda;
+  border-radius: 5px;
+  
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #bb99ff86;

@@ -39,12 +39,12 @@ export function setupContextMenu() {
                             positionHistory: [item.position],
                             speed: 30,
                             isUndo: false,
+                            usingSpell: false,
                         }
                     }
                 })
                 
             }else{
-                const items = context.items
                 OBR.scene.items.updateItems(context.items, (items) =>{
                     for (let item of items){
                         delete item.metadata[`${ID}/metadata`]
