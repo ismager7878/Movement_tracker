@@ -30,7 +30,7 @@ h1 {
   line-height: 1.1;
   margin: 0;
   font-size: 22px;
-  width: fit-content;
+  width: 110px;
 }
 
 .subtitle {
@@ -166,12 +166,12 @@ hr.divider {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 7px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #242424;
+  background: #1c1c29;
   -webkit-box-shadow: none;
   
 }
@@ -180,9 +180,25 @@ hr.divider {
 ::-webkit-scrollbar-thumb {
   background: #bb99ffda;
   border-radius: 5px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #1c1c29;
   
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #bb99ff86;
+  background: #bb99ff86;}
+
+#gmReset{
+  width: 30px;
+  height: 30px;
+  padding-top: 2.5px;
+}
+
+#gmReset:active > svg > path{
+  fill:#bb99ff;
+}
+
+    
+

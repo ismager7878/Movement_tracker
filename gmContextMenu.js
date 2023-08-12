@@ -1,34 +1,35 @@
 import OBR from "@owlbear-rodeo/sdk";
 
-
 const ID = 'com.abarbre.movement_tracker'
 
-export function setupContextMenu() {
+export const setupGmContextMenu = () =>  {
     OBR.contextMenu.create({
-        id: `${ID}/context-menu`,
-        icons: [
+        id: `${ID}/context-menu-gm`,
+        icons:[
             {
-                icon: '/assets/contextMenu_add_icon.svg',
-                label: 'Track Movement',
+                icon: "/assets/contextMenuGM_add_icon.svg",
+                label: "Track Movement(Private to GM)",
                 filter: {
-                    every: [
-                        {key:'layer', value:'CHARACTER'},
-                        {key: ["metadata", `${ID}/metadata`], value: undefined}
+                    roles: ["GM"],
+                    every:[
+                        {key:"layer", value:"CHARACTER"},
+                        {key:['metadata', `${ID}/metadata`], value: undefined}
                     ]
                 },
-            },    
+            },
             {
-                icon: '/assets/contextMenu_remove_icon.svg',
-                label: 'Stop Movement Tracking',
+                icon: "/assets/contextMenu_remove_icon.svg",
+                label: "Stop Movement Tracking",
                 filter: {
-                    every: [
-                        {key:'layer', value:'CHARACTER'},
-                        {key:['metadata', `${ID}/metadata`, 'isGmOnly'], value: false}
+                    roles: ["GM"],
+                    every:[
+                        {key:"layer", value:"CHARACTER"},
+                        {key:['metadata', `${ID}/metadata`, 'isGmOnly'], value: true}
                     ]
-                }
-            },      
+                },
+            }
         ],
-        async onClick(context) {
+        onClick(context){
             const addMovementTracker = context.items.every(x => x.metadata[`${ID}/metadata`] === undefined)
             if(addMovementTracker){
                 OBR.scene.items.updateItems(context.items, (items) => {
@@ -39,7 +40,7 @@ export function setupContextMenu() {
                             speed: 30,
                             isUndo: false,
                             usingSpell: false,
-                            isGmOnly: false
+                            isGmOnly: true
                         }
                     }
                 })
@@ -53,7 +54,6 @@ export function setupContextMenu() {
             }
             console.log('Character added')
         },
-        shortcut: "Ctrl + M"
+        shortcut: "G"
     })
-
 }

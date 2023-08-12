@@ -83,22 +83,46 @@ export async function setupMovementTracker(element) {
         let domElement = ''
         for(let item of items){
             if(item.metadata[`${ID}/metadata`] !== undefined){
-                trackedItems.push({
-                    id: item.id,
-                    name: item.text.plainText == '' ? item.name : item.text.plainText,
-                    speed: item.metadata[`${ID}/metadata`].speed,
-                    usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
-                    spellIconColor: item.metadata[`${ID}/metadata`].usingSpell == true ? "#bb99ff" : "#FFFFFF"
-                })
+                if(item.metadata[`${ID}/metadata`].isGmOnly){
+                    if(await OBR.player.getRole() == "GM"){
+                        trackedItems.push({
+                            id: item.id,
+                            name: item.text.plainText == '' ? item.name : item.text.plainText,
+                            speed: item.metadata[`${ID}/metadata`].speed,
+                            usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
+                            spellIconColor: item.metadata[`${ID}/metadata`].usingSpell == true ? "#bb99ff" : "#FFFFFF",
+                            color: '#bb99ffda'
+                        })
+                    }
+                }else{
+                    trackedItems.push({
+                        id: item.id,
+                        name: item.text.plainText == '' ? item.name : item.text.plainText,
+                        speed: item.metadata[`${ID}/metadata`].speed,
+                        usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
+                        spellIconColor: item.metadata[`${ID}/metadata`].usingSpell == true ? "#bb99ff" : "#FFFFFF",
+                        color: '#FFFFFF'
+                    })
+                }
+                
             }
         }
+        trackedItems.sort((a, b)=>{
+            if(a.color == '#bb99ffda' && b.color == '#FFFFFF'){
+                return -1
+            }else if(a.color == '#FFFFFF' && b.color == '#bb99ffda'){
+                return 1
+            }
+
+            return 0
+        })
         let i = 0
         element.innerHTML = ''
         for(let trackedItem of trackedItems){
             
             element.innerHTML += `<div id='player'> 
                                 <div class='name'>    
-                                <p>${trackedItem.name}</p>
+                                <p style="color:${trackedItem.color}">${trackedItem.name}</p>
                                 </div>
                                 <button class="tooltip undo" id="undo${i}">
                                     <span class="tooltiptext">
@@ -299,5 +323,31 @@ export const setUpStateToggle = async (element) => {
     }
     OBR.room.onMetadataChange(updateStateToggle)
     element.addEventListener("input", toggleState)
-  }
+}
+
+export const setupGmReset = async (element) => {
+
+    if(await OBR.player.getRole() == "PLAYER"){
+        element.style["display"] = "none"
+    }
+
+    const gmReset = async () => {
+        const metadata = await OBR.room.getMetadata()
+        if(!metadata[`${ID}/metadata`].state){
+            OBR.notification.show("Please enable the plugin before using it features", "INFO")
+            return
+        }
+        OBR.scene.items.updateItems(item => item.metadata[`${ID}/metadata`], items => {
+            for(let item of items){
+                const gmOnly = item.metadata[`${ID}/metadata`].isGmOnly
+                if(gmOnly){
+                    item.metadata[`${ID}/metadata`].usedMovement = 0
+                    item.metadata[`${ID}/metadata`].positionHistory = [item.position] 
+                    item.metadata[`${ID}/metadata`].usingSpell = false
+                }
+            }
+        })
+    }
+    element.addEventListener('click', gmReset)
+}
   
