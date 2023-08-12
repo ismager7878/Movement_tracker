@@ -177,7 +177,7 @@ export async function setupMovementTracker(element) {
             const resetMovement = async () => {
                 const metadata = await OBR.room.getMetadata()
                 if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features")
+                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
                     return
                 }
                 OBR.scene.items.updateItems(item => item.id == trackedItem.id, items => {
@@ -194,7 +194,7 @@ export async function setupMovementTracker(element) {
             const undoMovement = async () => {
                 const metadata = await OBR.room.getMetadata()
                 if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features")
+                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
                     return
                 }
                 const itemsCall =  await OBR.scene.items.getItems(item => item.id == trackedItem.id)
@@ -222,7 +222,7 @@ export async function setupMovementTracker(element) {
             const useSpell = async () =>{
                 const metadata = await OBR.room.getMetadata()
                 if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features")
+                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
                     return
                 }
                 OBR.scene.items.updateItems(item => item.id == trackedItem.id, items => {
