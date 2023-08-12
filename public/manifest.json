@@ -3,7 +3,8 @@
     "version": "0.9.0",
     "icon": "/assets/extension_logo.svg",
     "author": "Andreas Barbre",
-    "manifest_version": 9,
+    "description": "An easy way to keep track of your used movement in combat, as a player and GM controlling NPC's and Enemies",
+    "manifest_version": 10,
     "action": {
       "title": "Movement Tracker",
       "icon": "/assets/extension_icon.svg",
