@@ -18,7 +18,7 @@ This extension can add simple colored rings to any Character image.
 
 **How to use**
 
-Select your character token/tokens and click the button![AddIcon](public\assets\contextMenu_add_icon.svg) to add them to the movement tracker, and get moving!
+Select your character token/tokens and click the button![AddIcon](assets/contextMenu_add_icon.svg) to add them to the movement tracker, and get moving!
 
 **A tool for both GM's and Players**
 
