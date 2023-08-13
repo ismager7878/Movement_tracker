@@ -52,7 +52,7 @@ export async function setupMovementTracker(element) {
                     console.log(`${item.name}'s postion updated`)
                     
                     if(itemData.usedMovement + distance > itemData.speed && itemData.isUndo == false && itemData.usingSpell == false){
-                        OBR.notification.show(`You don't have enough movement for that, you have ${itemData.speed - itemData.usedMovement}ft. left`, "WARNING") 
+                        OBR.notification.show(`${item.text.plainText == '' ? item.name : item.text.plainText} don't have enough movement for that, you have ${itemData.speed - itemData.usedMovement}ft. left`, "WARNING") 
                         console.log("Postion history on to long or undo")
                         console.log(itemData.positionHistory)
                         await OBR.scene.items.updateItems((x)=>x.id == item.id, (items)=>{
@@ -326,6 +326,7 @@ export const setUpStateToggle = async (element) => {
 }
 
 export const setupGmReset = async (element) => {
+    
 
     if(await OBR.player.getRole() == "PLAYER"){
         element.style["display"] = "none"
@@ -333,10 +334,16 @@ export const setupGmReset = async (element) => {
 
     const gmReset = async () => {
         const metadata = await OBR.room.getMetadata()
+        const items = await OBR.scene.items.getItems(item => item.metadata[`${ID}/metadata`] !== undefined)
+          
         if(!metadata[`${ID}/metadata`].state){
             OBR.notification.show("Please enable the plugin before using it features", "INFO")
             return
         }
+        if(items.every(item => item.metadata[`${ID}/metadata`].isGmOnly == false)){
+            OBR.notification.show("You haven't added any GM entities yet", "INFO")
+            return
+        }     
         OBR.scene.items.updateItems(item => item.metadata[`${ID}/metadata`], items => {
             for(let item of items){
                 const gmOnly = item.metadata[`${ID}/metadata`].isGmOnly
