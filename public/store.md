@@ -2,7 +2,7 @@
 title: Movement Tracker
 description: An easy way to keep track of your used movement in combat. Both as a Player, and as a GM controlling NPC's and Enemies
 author: Andreas Barbre
-image: https://raw.githubusercontent.com/owlbear-rodeo/colored-rings/main/docs/header.jpg
+image: https://movement-tracker.abarbre.com/assets/hero_image.png
 icon: https://movement-tracker.abarbre.com/assets/extension_logo.png
 tags:
   - automation
