@@ -21,12 +21,12 @@ Select your character token/tokens and click the button ![AddIcon](assets/contex
 
 ### No more exceeding your movement speed
 
-![Showcase of exceeding movement](assets/exceeding_movement_showcase.png)
+![Showcase of exceeding movement](assets/movement_restriction_showcase.gif)
 
 In case you ever move too long, the extension will automaticly remind you and reverse your postion.
 
 #### Using dash or spell?  No problem!
-If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the *using spell* button ![AddIcon](assets/using_spell_icon.svg) and it bypasses the movement restriction, while til tracking you're movement
+If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the *using spell* button ![AddIcon](assets/using_spell_icon.svg) and it bypasses the movement restriction.
 
 ### A tool for both GM's and Players
 
