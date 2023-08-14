@@ -52,7 +52,6 @@ export const setupGmContextMenu = () =>  {
                     }
                 })  
             }
-            console.log('Character added')
         },
         shortcut: "G"
     })

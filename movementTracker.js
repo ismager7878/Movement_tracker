@@ -36,25 +36,18 @@ export async function setupMovementTracker(element) {
     const recordPosition = async (items) =>  {
         const metadata = await OBR.room.getMetadata()
         const roomMetadata = metadata[`${ID}/metadata`]
-        console.log(roomMetadata)
         if(!roomMetadata.state){
             return
         }
         for(let item of items){
             const itemData = item.metadata[`${ID}/metadata`]
             if(itemData !== undefined && item.layer == "CHARACTER"){
-                console.log(itemData)
-                console.log(`${item.name} has used ${itemData.usedMovement}`)
                 let lastPosition = itemData.positionHistory[itemData.positionHistory.length - 1]
                 if(item.position.x != lastPosition.x || item.position.y != lastPosition.y){
                     const distance = await calculateFeet(lastPosition, item.position)
-    
-                    console.log(`${item.name}'s postion updated`)
-                    
+
                     if(itemData.usedMovement + distance > itemData.speed && itemData.isUndo == false && itemData.usingSpell == false){
                         OBR.notification.show(`${item.text.plainText == '' ? item.name : item.text.plainText} don't have enough movement for that, you have ${itemData.speed - itemData.usedMovement}ft. left`, "WARNING") 
-                        console.log("Postion history on to long or undo")
-                        console.log(itemData.positionHistory)
                         await OBR.scene.items.updateItems((x)=>x.id == item.id, (items)=>{
                             for(let i of items){
                                 i.position = lastPosition
@@ -223,7 +216,6 @@ export async function setupMovementTracker(element) {
                 }
                 const itemsCall =  await OBR.scene.items.getItems(item => item.id == trackedItem.id)
                 const item = itemsCall[0]
-                console.log(item)
                 if(item.metadata[`${ID}/metadata`].positionHistory.length <= 1){
                     OBR.notification.show(`You haven't moved ${item.text.plainText == '' ? item.name : item.text.plainText} yet`, "INFO")
                     return
@@ -233,7 +225,7 @@ export async function setupMovementTracker(element) {
                 const newPosition = positionHistory[positionHistory.length - 1]
                 const distance = await calculateFeet(oldPosition, newPosition)
 
-                console.log(distance)
+                
                 OBR.scene.items.updateItems((x) => x.id == trackedItem.id, (items)=>{
                     for(let i of items){
                         i.metadata[`${ID}/metadata`].positionHistory.pop()
@@ -271,8 +263,12 @@ export async function setupMovementTracker(element) {
         renderMovementTrackerList(items)
         
     })
+    try{
+        renderMovementTrackerList(await OBR.scene.items.getItems(item => item.metadata[`${ID}/metadata`] !== undefined))
+    }catch(error){
+
+    }
     
-    renderMovementTrackerList(await OBR.scene.items.getItems(item => item.metadata[`${ID}/metadata`] !== undefined))
 }
 
 
@@ -317,7 +313,6 @@ export const setUpStateToggle = async (element) => {
     }
 
     const updateStateToggle = async (data) =>{
-        console.log(data)
         const metadata = data[`${ID}/metadata`]
         element.checked = metadata.state
     }

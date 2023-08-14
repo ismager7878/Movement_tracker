@@ -51,7 +51,6 @@ export function setupContextMenu() {
                     }
                 })  
             }
-            console.log('Character added')
         },
         shortcut: "Ctrl + M"
     })

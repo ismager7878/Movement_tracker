@@ -4,10 +4,6 @@ import { setupContextMenu } from './contextMenu'
 import { setupMovementTracker, setUpStateToggle, setupGmReset } from './movementTracker'
 import { setupGmContextMenu } from './gmContextMenu'
 
-const hello = async (e) => {
-  console.log('heej')
-}
-
 
 OBR.onReady(()=>{
   setUpStateToggle(document.querySelector('#toggle'))
