@@ -13,6 +13,7 @@ learn-more: ao.barbre@gmail.com
 ---
 
 # Movement Tracker
+
 An easy way to keep track of your used movement in combat. Both as a Player, and as a GM controlling NPC's and Enemies
 
 ## Features
@@ -25,8 +26,9 @@ Select your character token/tokens and click the button ![AddIcon](assets/contex
 
 In case you ever move too long, the extension will automaticly remind you and reverse your postion.
 
-#### Using dash or spell?  No problem!
-If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the *using spell* button ![AddIcon](assets/using_spell_icon.svg) and it bypasses the movement restriction.
+#### Using dash or spell? No problem!
+
+If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the _using spell_ button ![AddIcon](assets/using_spell_icon.svg) and it bypasses the movement restriction.
 
 ### A tool for both GM's and Players
 
@@ -39,6 +41,7 @@ The tracker is designed to both help the GM with controlling the Enemies and NPC
 Everything in the UI is updated i realtime between players. So players easily can work together to claim victory!
 
 ### Use in combination with Owlbears measure tool for a seamless experience!
+
 ![Showcase of using with measure tool](assets/seamless_experience_showcase.png)
 Double tap **M** for a seamless experience
 

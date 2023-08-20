@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  
+
   background-color: #1c1c29;
 
   font-synthesis: none;
@@ -46,44 +46,44 @@ h1 {
   flex-direction: column;
 }
 
-#player{
+#player {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-button{
+button {
   cursor: pointer;
   border: none;
   background-color: #24242400;
   border-radius: 5px;
   padding: 0;
 }
-button:hover{
+button:hover {
   background-color: #5e5e5e5b;
 }
-button.spell:active > svg{
-  fill: #bb99ff; 
+button.spell:active > svg {
+  fill: #bb99ff;
 }
-button.undo:active > svg > path{
+button.undo:active > svg > path {
   stroke: #bb99ff;
 }
-button:active > svg > g{
+button:active > svg > g {
   stroke: #bb99ff;
 }
-.reset{
+.reset {
   width: 20px;
   height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.tooltip{
+.tooltip {
   position: relative;
   display: flex;
   justify-content: center;
 }
 
-.tooltiptext{
+.tooltiptext {
   visibility: hidden;
   opacity: 0;
   background-color: #5b5b5d;
@@ -91,20 +91,20 @@ button:active > svg > g{
   position: absolute;
   z-index: -1;
   top: -30px;
-  padding:.4em .8em .4em .8em; 
+  padding: 0.4em 0.8em 0.4em 0.8em;
   border-radius: 10px;
   transition: opacity 0.3s;
   font-weight: bold;
   font-size: 12px;
 }
 
-.tooltip:hover .tooltiptext{
+.tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
 
-input{
-  cursor:text;
+input {
+  cursor: text;
   margin: 0;
   width: 20px;
   height: 20px;
@@ -122,11 +122,11 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.movement{
+.movement {
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -158,11 +158,10 @@ hr.divider {
   width: 20px;
 }
 
-.name{
+.name {
   width: 73px;
   overflow: hidden;
 }
-
 
 /* width */
 ::-webkit-scrollbar {
@@ -173,7 +172,6 @@ hr.divider {
 ::-webkit-scrollbar-track {
   background: #1c1c29;
   -webkit-box-shadow: none;
-  
 }
 
 /* Handle */
@@ -183,22 +181,19 @@ hr.divider {
   border-style: solid;
   border-width: 2px;
   border-color: #1c1c29;
-  
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #bb99ff86;}
+  background: #bb99ff86;
+}
 
-#gmReset{
+#gmReset {
   width: 30px;
   height: 30px;
   padding-top: 2.5px;
 }
 
-#gmReset:active > svg > path{
-  fill:#bb99ff;
+#gmReset:active > svg > path {
+  fill: #bb99ff;
 }
-
-    
-

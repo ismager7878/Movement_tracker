@@ -1,129 +1,155 @@
 import OBR from "@owlbear-rodeo/sdk";
 
-const ID = 'com.abarbre.movement_tracker'
+const ID = "com.abarbre.movement_tracker";
 
-let renderMovementTrackerList = ()=>{}
+let renderMovementTrackerList = () => {};
 
 const getRoomMetadata = async () => {
-    const metadata = await OBR.room.getMetadata()
-    return metadata[`${ID}/metadata`]
-}
+  const metadata = await OBR.room.getMetadata();
+  return metadata[`${ID}/metadata`];
+};
 
 const getItemIndex = (roomData, itemData) => {
-    return roomData.characters.findIndex((x)=> x.id == itemData.id)
-}
+  return roomData.characters.findIndex((x) => x.id == itemData.id);
+};
 
 const calculateFeet = async (oldPosition, newPosition) => {
-    const newSnapPos = await OBR.scene.grid.snapPosition(newPosition, true, false)
-    const oldSnapPos = await OBR.scene.grid.snapPosition(oldPosition, true, false)
-    const yDiff = Math.abs(newSnapPos.y - oldSnapPos.y)
-    const xDiff = Math.abs(newSnapPos.x - oldSnapPos.x)
+  const newSnapPos = await OBR.scene.grid.snapPosition(
+    newPosition,
+    true,
+    false
+  );
+  const oldSnapPos = await OBR.scene.grid.snapPosition(
+    oldPosition,
+    true,
+    false
+  );
+  const yDiff = Math.abs(newSnapPos.y - oldSnapPos.y);
+  const xDiff = Math.abs(newSnapPos.x - oldSnapPos.x);
 
-    const direction = yDiff >= xDiff ? yDiff : xDiff
+  const direction = yDiff >= xDiff ? yDiff : xDiff;
 
-    const dpi = await OBR.scene.grid.getDpi()
-    const scale = await OBR.scene.grid.getScale()
+  const dpi = await OBR.scene.grid.getDpi();
+  const scale = await OBR.scene.grid.getScale();
 
-    return (direction/dpi)*scale.parsed.multiplier
-
-}
-
-
-
+  return (direction / dpi) * scale.parsed.multiplier;
+};
 
 export async function setupMovementTracker(element) {
-
-    const recordPosition = async (items) =>  {
-        const metadata = await OBR.room.getMetadata()
-        const roomMetadata = metadata[`${ID}/metadata`]
-        if(!roomMetadata.state){
-            return
-        }
-        for(let item of items){
-            const itemData = item.metadata[`${ID}/metadata`]
-            if(itemData !== undefined && item.layer == "CHARACTER"){
-                let lastPosition = itemData.positionHistory[itemData.positionHistory.length - 1]
-                if(item.position.x != lastPosition.x || item.position.y != lastPosition.y){
-                    const distance = await calculateFeet(lastPosition, item.position)
-
-                    if(itemData.usedMovement + distance > itemData.speed && itemData.isUndo == false && itemData.usingSpell == false){
-                        OBR.notification.show(`${item.text.plainText == '' ? item.name : item.text.plainText} don't have enough movement for that, you have ${itemData.speed - itemData.usedMovement}ft. left`, "WARNING") 
-                        await OBR.scene.items.updateItems((x)=>x.id == item.id, (items)=>{
-                            for(let i of items){
-                                i.position = lastPosition
-                            }
-                        })
-                        return                     
-                    }
-                    if(await OBR.player.getRole() == "PLAYER"){
-                        return
-                    }
-                    OBR.scene.items.updateItems(x => x.id == item.id, (items)=>{
-                        for(let i of items){
-                            i.metadata[`${ID}/metadata`].positionHistory.push(i.position)
-                            i.metadata[`${ID}/metadata`].usedMovement += distance
-
-                        }
-                    })
-                    
-                }
-            }  
-        }
+  const recordPosition = async (items) => {
+    const metadata = await OBR.room.getMetadata();
+    const roomMetadata = metadata[`${ID}/metadata`];
+    if (!roomMetadata.state) {
+      return;
     }
+    for (let item of items) {
+      const itemData = item.metadata[`${ID}/metadata`];
+      if (itemData !== undefined && item.layer == "CHARACTER") {
+        let lastPosition =
+          itemData.positionHistory[itemData.positionHistory.length - 1];
+        if (
+          item.position.x != lastPosition.x ||
+          item.position.y != lastPosition.y
+        ) {
+          const distance = await calculateFeet(lastPosition, item.position);
 
-    renderMovementTrackerList = async (items) => {
-        let trackedItems = []
-        let domElement = ''
-        for(let item of items){
-            if(item.metadata[`${ID}/metadata`] !== undefined){
-                if(item.metadata[`${ID}/metadata`].isGmOnly){
-                    if(await OBR.player.getRole() == "GM"){
-                        trackedItems.push({
-                            id: item.id,
-                            name: item.text.plainText == '' ? item.name : item.text.plainText,
-                            speed: item.metadata[`${ID}/metadata`].speed,
-                            usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
-                            spellIconColor: item.metadata[`${ID}/metadata`].usingSpell == true ? "#bb99ff" : "#FFFFFF",
-                            color: '#bb99ffda'
-                        })
-                    }
-                }else{
-                    trackedItems.push({
-                        id: item.id,
-                        name: item.text.plainText == '' ? item.name : item.text.plainText,
-                        speed: item.metadata[`${ID}/metadata`].speed,
-                        usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
-                        spellIconColor: item.metadata[`${ID}/metadata`].usingSpell == true ? "#bb99ff" : "#FFFFFF",
-                        color: '#FFFFFF'
-                    })
+          if (
+            itemData.usedMovement + distance > itemData.speed &&
+            itemData.isUndo == false &&
+            itemData.usingSpell == false
+          ) {
+            OBR.notification.show(
+              `${
+                item.text.plainText == "" ? item.name : item.text.plainText
+              } don't have enough movement for that, you have ${
+                itemData.speed - itemData.usedMovement
+              }ft. left`,
+              "WARNING"
+            );
+            await OBR.scene.items.updateItems(
+              (x) => x.id == item.id,
+              (items) => {
+                for (let i of items) {
+                  i.position = lastPosition;
                 }
-                
+              }
+            );
+            return;
+          }
+          if ((await OBR.player.getRole()) == "PLAYER") {
+            return;
+          }
+          OBR.scene.items.updateItems(
+            (x) => x.id == item.id,
+            (items) => {
+              for (let i of items) {
+                i.metadata[`${ID}/metadata`].positionHistory.push(i.position);
+                i.metadata[`${ID}/metadata`].usedMovement += distance;
+              }
             }
+          );
         }
-        trackedItems.sort((a, b)=>{
-            if(a.color == '#bb99ffda' && b.color == '#FFFFFF'){
-                return -1
-            }else if(a.color == '#FFFFFF' && b.color == '#bb99ffda'){
-                return 1
-            }
+      }
+    }
+  };
 
-            return 0
-        })
-        let i = 0
-        element.innerHTML = ''
-        for(let trackedItem of trackedItems){
-            
-            element.innerHTML += `<div id='player'> 
-                                <div class='name'>    
+  renderMovementTrackerList = async (items) => {
+    let trackedItems = [];
+    let domElement = "";
+    for (let item of items) {
+      if (item.metadata[`${ID}/metadata`] !== undefined) {
+        if (item.metadata[`${ID}/metadata`].isGmOnly) {
+          if ((await OBR.player.getRole()) == "GM") {
+            trackedItems.push({
+              id: item.id,
+              name: item.text.plainText == "" ? item.name : item.text.plainText,
+              speed: item.metadata[`${ID}/metadata`].speed,
+              usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
+              spellIconColor:
+                item.metadata[`${ID}/metadata`].usingSpell == true
+                  ? "#bb99ff"
+                  : "#FFFFFF",
+              color: "#bb99ffda",
+            });
+          }
+        } else {
+          trackedItems.push({
+            id: item.id,
+            name: item.text.plainText == "" ? item.name : item.text.plainText,
+            speed: item.metadata[`${ID}/metadata`].speed,
+            usedMovement: item.metadata[`${ID}/metadata`].usedMovement,
+            spellIconColor:
+              item.metadata[`${ID}/metadata`].usingSpell == true
+                ? "#bb99ff"
+                : "#FFFFFF",
+            color: "#FFFFFF",
+          });
+        }
+      }
+    }
+    trackedItems.sort((a, b) => {
+      if (a.color == "#bb99ffda" && b.color == "#FFFFFF") {
+        return -1;
+      } else if (a.color == "#FFFFFF" && b.color == "#bb99ffda") {
+        return 1;
+      }
+
+      return 0;
+    });
+    let i = 0;
+    element.innerHTML = "";
+    for (let trackedItem of trackedItems) {
+      element.innerHTML += `<div id='player'> 
+                              <div class='name'>    
                                 <p style="color:${trackedItem.color}">${trackedItem.name}</p>
-                                </div>
-                                <button class="tooltip undo" id="undo${i}">
-                                    <span class="tooltiptext">
-                                        <nobr>Undo Movements</nobr>
-                                    </span>
-                                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M4 9V15M4 15H10M4 15C6.32744 12.9114 8.48287 10.5468 11.7453 10.0878C13.6777 9.81593 15.6461 10.1794 17.3539 11.1234C19.0617 12.0675 20.4164 13.5409 21.2139 15.3218" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                              </div>
+                              <button class="tooltip undo" id="undo${i}">
+                                <span class="tooltiptext">
+                                  <nobr>Undo Movements</nobr>
+                                </span>
+                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M4 9V15M4 15H10M4 15C6.32744 12.9114 8.48287 10.5468 11.7453 10.0878C13.6777 9.81593 15.6461 10.1794 17.3539 11.1234C19.0617 12.0675 20.4164 13.5409 21.2139 15.3218" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
                                 </button>
                                 <button class="tooltip reset" id="reset${i}">
                                     <span class="tooltiptext">
@@ -143,13 +169,13 @@ export async function setupMovementTracker(element) {
                                 </button>
                                 <button class="tooltip spell" id="spell${i}">
                                 <span class="tooltiptext">
-                                    <nobr>Using spell</nobr>
+                                <nobr>Using spell</nobr>
                                 </span>
                                 <svg fill=${trackedItem.spellIconColor} height="13px" width="13px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
 	 viewBox="0 0 512 512" xml:space="preserve">
 <g>
 	<g>
-		<g>
+    <g>
 			<path d="M64,64v21.333c-11.776,0-21.333,9.557-21.333,21.333S52.224,128,64,128v106.667c-11.776,0-21.333,9.557-21.333,21.333
 				c0,11.776,9.557,21.333,21.333,21.333V384c-11.776,0-21.333,9.557-21.333,21.333S52.224,426.667,64,426.667V448
 				c0,35.285,28.715,64,64,64h21.333V0H128C92.715,0,64,28.715,64,64z"/>
@@ -176,180 +202,229 @@ export async function setupMovementTracker(element) {
                                 </div>
                         </div>
                         <hr class="divider">
-            `
-            i++
-        }
-    
-        for(let n = 0; n < trackedItems.length; n++){
-            const trackedItem = trackedItems[n]
-            const updateSpeed = async (e) => {
-                await OBR.scene.items.updateItems((item) => item.id === trackedItem.id, (items)=>{
-                    for(let item of items){
-                        if(item.metadata[`${ID}/metadata`] !== undefined){
-                            item.metadata[`${ID}/metadata`].speed = e.target.value
-                        }
-                    }   
-                })
-            }
-            const resetMovement = async () => {
-                const metadata = await OBR.room.getMetadata()
-                if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
-                    return
-                }
-                OBR.scene.items.updateItems(item => item.id == trackedItem.id, items => {
-                    for(let item of items){
-                        if(item.metadata[`${ID}/metadata`] !== undefined){
-                            item.metadata[`${ID}/metadata`].usedMovement = 0
-                            item.metadata[`${ID}/metadata`].positionHistory = [item.position]
-                            item.metadata[`${ID}/metadata`].usingSpell = false
-                        }
-                    }
-                })
-            }
-    
-            const undoMovement = async () => {
-                const metadata = await OBR.room.getMetadata()
-                if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
-                    return
-                }
-                const itemsCall =  await OBR.scene.items.getItems(item => item.id == trackedItem.id)
-                const item = itemsCall[0]
-                if(item.metadata[`${ID}/metadata`].positionHistory.length <= 1){
-                    OBR.notification.show(`You haven't moved ${item.text.plainText == '' ? item.name : item.text.plainText} yet`, "INFO")
-                    return
-                }
-                const positionHistory = item.metadata[`${ID}/metadata`].positionHistory
-                const oldPosition = positionHistory.pop()
-                const newPosition = positionHistory[positionHistory.length - 1]
-                const distance = await calculateFeet(oldPosition, newPosition)
-
-                
-                OBR.scene.items.updateItems((x) => x.id == trackedItem.id, (items)=>{
-                    for(let i of items){
-                        i.metadata[`${ID}/metadata`].positionHistory.pop()
-                        i.metadata[`${ID}/metadata`].usedMovement -= distance
-                        i.position = newPosition
-                        
-                    }
-                })
-            }
-            const useSpell = async () =>{
-                const metadata = await OBR.room.getMetadata()
-                if(!metadata[`${ID}/metadata`].state){
-                    OBR.notification.show("Please enable the plugin before using it features", "INFO")
-                    return
-                }
-                OBR.scene.items.updateItems(item => item.id == trackedItem.id, items => {
-                    for(let item of items){
-                        item.metadata[`${ID}/metadata`].usingSpell = !item.metadata[`${ID}/metadata`].usingSpell
-                    }
-                }) 
-            }
-            element.querySelector(`#reset${n}`).addEventListener("click", resetMovement)
-            element.querySelector(`#undo${n}`).addEventListener("click", undoMovement)
-            element.querySelector(`#input${n}`).addEventListener("change", updateSpeed)
-            element.querySelector(`#spell${n}`).addEventListener("click", useSpell)
-        }
-
-        
+            `;
+      i++;
     }
 
-    OBR.scene.items.onChange(async (items) => {
+    for (let n = 0; n < trackedItems.length; n++) {
+      const trackedItem = trackedItems[n];
+      const updateSpeed = async (e) => {
+        await OBR.scene.items.updateItems(
+          (item) => item.id === trackedItem.id,
+          (items) => {
+            for (let item of items) {
+              if (item.metadata[`${ID}/metadata`] !== undefined) {
+                item.metadata[`${ID}/metadata`].speed = e.target.value;
+              }
+            }
+          }
+        );
+      };
+      const resetMovement = async () => {
+        const metadata = await OBR.room.getMetadata();
+        if (!metadata[`${ID}/metadata`].state) {
+          OBR.notification.show(
+            "Please enable the plugin before using it features",
+            "INFO"
+          );
+          return;
+        }
+        OBR.scene.items.updateItems(
+          (item) => item.id == trackedItem.id,
+          (items) => {
+            for (let item of items) {
+              if (item.metadata[`${ID}/metadata`] !== undefined) {
+                item.metadata[`${ID}/metadata`].usedMovement = 0;
+                item.metadata[`${ID}/metadata`].positionHistory = [
+                  item.position,
+                ];
+                item.metadata[`${ID}/metadata`].usingSpell = false;
+              }
+            }
+          }
+        );
+      };
 
-        await recordPosition(items);
-        
-        renderMovementTrackerList(items)
-        
-    })
-    try{
-        renderMovementTrackerList(await OBR.scene.items.getItems(item => item.metadata[`${ID}/metadata`] !== undefined))
-    }catch(error){
+      const undoMovement = async () => {
+        const metadata = await OBR.room.getMetadata();
+        if (!metadata[`${ID}/metadata`].state) {
+          OBR.notification.show(
+            "Please enable the plugin before using it features",
+            "INFO"
+          );
+          return;
+        }
+        const itemsCall = await OBR.scene.items.getItems(
+          (item) => item.id == trackedItem.id
+        );
+        const item = itemsCall[0];
+        if (item.metadata[`${ID}/metadata`].positionHistory.length <= 1) {
+          OBR.notification.show(
+            `You haven't moved ${
+              item.text.plainText == "" ? item.name : item.text.plainText
+            } yet`,
+            "INFO"
+          );
+          return;
+        }
+        const positionHistory = item.metadata[`${ID}/metadata`].positionHistory;
+        const oldPosition = positionHistory.pop();
+        const newPosition = positionHistory[positionHistory.length - 1];
+        const distance = await calculateFeet(oldPosition, newPosition);
 
+        OBR.scene.items.updateItems(
+          (x) => x.id == trackedItem.id,
+          (items) => {
+            for (let i of items) {
+              i.metadata[`${ID}/metadata`].positionHistory.pop();
+              i.metadata[`${ID}/metadata`].usedMovement -= distance;
+              i.position = newPosition;
+            }
+          }
+        );
+      };
+      const useSpell = async () => {
+        const metadata = await OBR.room.getMetadata();
+        if (!metadata[`${ID}/metadata`].state) {
+          OBR.notification.show(
+            "Please enable the plugin before using it features",
+            "INFO"
+          );
+          return;
+        }
+        OBR.scene.items.updateItems(
+          (item) => item.id == trackedItem.id,
+          (items) => {
+            for (let item of items) {
+              item.metadata[`${ID}/metadata`].usingSpell =
+                !item.metadata[`${ID}/metadata`].usingSpell;
+            }
+          }
+        );
+      };
+      element
+        .querySelector(`#reset${n}`)
+        .addEventListener("click", resetMovement);
+      element
+        .querySelector(`#undo${n}`)
+        .addEventListener("click", undoMovement);
+      element
+        .querySelector(`#input${n}`)
+        .addEventListener("change", updateSpeed);
+      element.querySelector(`#spell${n}`).addEventListener("click", useSpell);
     }
-    
+  };
+
+  OBR.scene.items.onChange(async (items) => {
+    await recordPosition(items);
+
+    renderMovementTrackerList(items);
+  });
+  try {
+    renderMovementTrackerList(
+      await OBR.scene.items.getItems(
+        (item) => item.metadata[`${ID}/metadata`] !== undefined
+      )
+    );
+  } catch (error) {}
 }
-
 
 export const setUpStateToggle = async (element) => {
-    let meta = await OBR.room.getMetadata()
-    if(await OBR.player.getRole() == "GM" && meta[`${ID}/metadata`] === undefined){
-        meta = {
-            "com.abarbre.movement_tracker/metadata":{
-                state: false,        
+  let meta = await OBR.room.getMetadata();
+  if (
+    (await OBR.player.getRole()) == "GM" &&
+    meta[`${ID}/metadata`] === undefined
+  ) {
+    meta = {
+      "com.abarbre.movement_tracker/metadata": {
+        state: false,
+      },
+    };
+  }
+  element.checked = meta[`${ID}/metadata`].state;
+  await OBR.room.setMetadata(meta);
+
+  const toggleState = async (callback) => {
+    const metadata = await OBR.room.getMetadata();
+
+    const playerRole = await OBR.player.getRole();
+    if (playerRole == "GM") {
+      if (
+        metadata[`${ID}/metadata`].state == false &&
+        element.checked == true
+      ) {
+        OBR.scene.items.updateItems(
+          (item) => item.metadata[`${ID}/metadata`] !== undefined,
+          (items) => {
+            for (let item of items) {
+              item.metadata[`${ID}/metadata`].positionHistory = [item.position];
             }
-        }
-    }
-    element.checked = meta[`${ID}/metadata`].state
-    await OBR.room.setMetadata(meta)
-
-    const toggleState = async (callback) => {
-        const metadata = await OBR.room.getMetadata()
-
-        const playerRole = await OBR.player.getRole()
-        if(playerRole == "GM"){
-            if(metadata[`${ID}/metadata`].state == false && element.checked == true){
-                OBR.scene.items.updateItems(item => item.metadata[`${ID}/metadata`] !== undefined, items => {
-                    for(let item of items){
-                        item.metadata[`${ID}/metadata`].positionHistory = [item.position]
-                    }
-                })
-            }else{
-                OBR.scene.items.updateItems(item => item.metadata[`${ID}/metadata`] !== undefined, items => {
-                    for(let item of items){
-                        item.metadata[`${ID}/metadata`].usedMovement = 0
-                    }
-                })
+          }
+        );
+      } else {
+        OBR.scene.items.updateItems(
+          (item) => item.metadata[`${ID}/metadata`] !== undefined,
+          (items) => {
+            for (let item of items) {
+              item.metadata[`${ID}/metadata`].usedMovement = 0;
             }
-            metadata[`${ID}/metadata`].state = callback.target.checked
-        }
-        else{
-            OBR.notification.show("You shall not touch, the GM's button", "WARNING")
-            element.checked = metadata[`${ID}/metadata`].state
-        }
-
-        await OBR.room.setMetadata(metadata)
+          }
+        );
+      }
+      metadata[`${ID}/metadata`].state = callback.target.checked;
+    } else {
+      OBR.notification.show("You shall not touch, the GM's button", "WARNING");
+      element.checked = metadata[`${ID}/metadata`].state;
     }
 
-    const updateStateToggle = async (data) =>{
-        const metadata = data[`${ID}/metadata`]
-        element.checked = metadata.state
-    }
-    OBR.room.onMetadataChange(updateStateToggle)
-    element.addEventListener("input", toggleState)
-}
+    await OBR.room.setMetadata(metadata);
+  };
+
+  const updateStateToggle = async (data) => {
+    const metadata = data[`${ID}/metadata`];
+    element.checked = metadata.state;
+  };
+  OBR.room.onMetadataChange(updateStateToggle);
+  element.addEventListener("input", toggleState);
+};
 
 export const setupGmReset = async (element) => {
-    
+  if ((await OBR.player.getRole()) == "PLAYER") {
+    element.style["display"] = "none";
+  }
 
-    if(await OBR.player.getRole() == "PLAYER"){
-        element.style["display"] = "none"
+  const gmReset = async () => {
+    const metadata = await OBR.room.getMetadata();
+    const items = await OBR.scene.items.getItems(
+      (item) => item.metadata[`${ID}/metadata`] !== undefined
+    );
+
+    if (!metadata[`${ID}/metadata`].state) {
+      OBR.notification.show(
+        "Please enable the plugin before using it features",
+        "INFO"
+      );
+      return;
     }
-
-    const gmReset = async () => {
-        const metadata = await OBR.room.getMetadata()
-        const items = await OBR.scene.items.getItems(item => item.metadata[`${ID}/metadata`] !== undefined)
-          
-        if(!metadata[`${ID}/metadata`].state){
-            OBR.notification.show("Please enable the plugin before using it features", "INFO")
-            return
+    if (
+      items.every((item) => item.metadata[`${ID}/metadata`].isGmOnly == false)
+    ) {
+      OBR.notification.show("You haven't added any GM entities yet", "INFO");
+      return;
+    }
+    OBR.scene.items.updateItems(
+      (item) => item.metadata[`${ID}/metadata`],
+      (items) => {
+        for (let item of items) {
+          const gmOnly = item.metadata[`${ID}/metadata`].isGmOnly;
+          if (gmOnly) {
+            item.metadata[`${ID}/metadata`].usedMovement = 0;
+            item.metadata[`${ID}/metadata`].positionHistory = [item.position];
+            item.metadata[`${ID}/metadata`].usingSpell = false;
+          }
         }
-        if(items.every(item => item.metadata[`${ID}/metadata`].isGmOnly == false)){
-            OBR.notification.show("You haven't added any GM entities yet", "INFO")
-            return
-        }     
-        OBR.scene.items.updateItems(item => item.metadata[`${ID}/metadata`], items => {
-            for(let item of items){
-                const gmOnly = item.metadata[`${ID}/metadata`].isGmOnly
-                if(gmOnly){
-                    item.metadata[`${ID}/metadata`].usedMovement = 0
-                    item.metadata[`${ID}/metadata`].positionHistory = [item.position] 
-                    item.metadata[`${ID}/metadata`].usingSpell = false
-                }
-            }
-        })
-    }
-    element.addEventListener('click', gmReset)
-}
-  
+      }
+    );
+  };
+  element.addEventListener("click", gmReset);
+};
