@@ -18,23 +18,23 @@ An easy way to keep track of your used movement in combat. Both as a Player, and
 
 ## Features
 
-Select your character token/tokens and click the button ![AddIcon](assets/contextMenu_add_icon.svg) to add them to the movement tracker, and get moving!
+Select your character token/tokens and click the button ![AddIcon](https://movement-tracker.abarbre.com/assets/contextMenu_add_icon.svg) to add them to the movement tracker, and get moving!
 
 ### No more exceeding your movement speed
 
-![Showcase of exceeding movement](assets/movement_restriction_showcase.gif)
+![Showcase of exceeding movement](https://movement-tracker.abarbre.com/assets/movement_restriction_showcase.gif)
 
 In case you ever move too long, the extension will automaticly remind you and reverse your postion.
 
 #### Using dash or spell? No problem!
 
-If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the _using spell_ button ![AddIcon](assets/using_spell_icon.svg) and it bypasses the movement restriction.
+If you're ever using dash, or any kind of spell, that gains you extra movement. Just tap the _using spell_ button ![AddIcon](https://movement-tracker.abarbre.com/assets/using_spell_icon.svg) and it bypasses the movement restriction.
 
 ### A tool for both GM's and Players
 
-![Showcase of GM entities](assets/GM_Player_showcase.png)
+![Showcase of GM entities](https://movement-tracker.abarbre.com/assets/GM_Player_showcase.png)
 
-The tracker is designed to both help the GM with controlling the Enemies and NPC's, and Players controlling thier character, without spoiling the speed of the GM's Enemies. The GM has to option to privately track his entities![AddIcon](assets/contextMenuGM_add_icon.svg), which makes them only visible for him. His privately tracked entities will then have a different font color, and sorted at the top of his list, so the they are easily accesible for the GM to manage. He can also reset the movement of all GM enteties at once![AddIcon](assets/GM_reset_icon.svg)
+The tracker is designed to both help the GM with controlling the Enemies and NPC's, and Players controlling thier character, without spoiling the speed of the GM's Enemies. The GM has to option to privately track his entities![AddIcon](https://movement-tracker.abarbre.com/assets/contextMenuGM_add_icon.svg), which makes them only visible for him. His privately tracked entities will then have a different font color, and sorted at the top of his list, so the they are easily accesible for the GM to manage. He can also reset the movement of all GM enteties at once![AddIcon](https://movement-tracker.abarbre.com/assets/GM_reset_icon.svg)
 
 ### Realtime updates
 
@@ -42,7 +42,7 @@ Everything in the UI is updated i realtime between players. So players easily ca
 
 ### Use in combination with Owlbears measure tool for a seamless experience!
 
-![Showcase of using with measure tool](assets/seamless_experience_showcase.png)
+![Showcase of using with measure tool](https://movement-tracker.abarbre.com/assets/seamless_experience_showcase.png)
 Double tap **M** for a seamless experience
 
 ## Support
