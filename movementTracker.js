@@ -316,7 +316,7 @@ export async function setupMovementTracker(element) {
   };
 
   OBR.scene.items.onChange(async (items) => {
-    await recordPosition(items);
+    recordPosition(items);
 
     renderMovementTrackerList(items);
   });
