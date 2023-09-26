@@ -1,6 +1,7 @@
 import OBR from "@owlbear-rodeo/sdk";
+import config from "./config.json";
 
-const ID = "com.abarbre.movement_tracker";
+const ID = config.ID;
 
 export const setupGmContextMenu = () => {
   OBR.contextMenu.create({
@@ -31,7 +32,7 @@ export const setupGmContextMenu = () => {
     ],
     onClick(context) {
       const addMovementTracker = context.items.every(
-        (x) => x.metadata[`${ID}/metadata`] === undefined,
+        (x) => x.metadata[`${ID}/metadata`] === undefined
       );
       if (addMovementTracker) {
         OBR.scene.items.updateItems(context.items, (items) => {

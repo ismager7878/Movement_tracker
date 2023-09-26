@@ -1,6 +1,7 @@
 import OBR from "@owlbear-rodeo/sdk";
+import config from "./config.json"
 
-const ID = "com.abarbre.movement_tracker";
+const ID = config.ID;
 
 let renderMovementTrackerList = () => {};
 
@@ -14,25 +15,9 @@ const getItemIndex = (roomData, itemData) => {
 };
 
 const calculateFeet = async (oldPosition, newPosition) => {
-  const newSnapPos = await OBR.scene.grid.snapPosition(
-    newPosition,
-    true,
-    false
-  );
-  const oldSnapPos = await OBR.scene.grid.snapPosition(
-    oldPosition,
-    true,
-    false
-  );
-  const yDiff = Math.abs(newSnapPos.y - oldSnapPos.y);
-  const xDiff = Math.abs(newSnapPos.x - oldSnapPos.x);
-
-  const direction = yDiff >= xDiff ? yDiff : xDiff;
-
-  const dpi = await OBR.scene.grid.getDpi();
+  const distance = await OBR.scene.grid.getDistance(oldPosition, newPosition);
   const scale = await OBR.scene.grid.getScale();
-
-  return (direction / dpi) * scale.parsed.multiplier;
+  return Math.floor(distance * scale.parsed.multiplier);
 };
 
 export async function setupMovementTracker(element) {
@@ -52,7 +37,6 @@ export async function setupMovementTracker(element) {
           item.position.y != lastPosition.y
         ) {
           const distance = await calculateFeet(lastPosition, item.position);
-
           if (
             itemData.usedMovement + distance > itemData.speed &&
             itemData.isUndo == false &&
@@ -79,6 +63,7 @@ export async function setupMovementTracker(element) {
           if ((await OBR.player.getRole()) == "PLAYER") {
             return;
           }
+          console.log(`new distance${distance}`);
           OBR.scene.items.updateItems(
             (x) => x.id == item.id,
             (items) => {
@@ -96,6 +81,8 @@ export async function setupMovementTracker(element) {
   renderMovementTrackerList = async (items) => {
     let trackedItems = [];
     let domElement = "";
+    const scale = await OBR.scene.grid.getScale();
+    const unit = scale.parsed.unit;
     for (let item of items) {
       if (item.metadata[`${ID}/metadata`] !== undefined) {
         if (item.metadata[`${ID}/metadata`].isGmOnly) {
@@ -198,7 +185,7 @@ export async function setupMovementTracker(element) {
                                         </span>
                                         <input type="number" id="input${i}" class='movementInput' value='${trackedItem.speed}'>
                                     </div>
-                                    ft.
+                                    ${unit}
                                 </div>
                         </div>
                         <hr class="divider">

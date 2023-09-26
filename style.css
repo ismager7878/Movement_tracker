@@ -16,6 +16,46 @@
   overflow-x: clip;
 }
 
+.overlay {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.overlayElement {
+  background-color: #1c1c29;
+  height: 200px;
+  width: 150px;
+  cursor: default;
+  border-radius: 16px;
+}
+.overlayElement h1 {
+  font-size: 15px;
+  text-align: center;
+}
+.overlayElement .header {
+  margin-top: 3px;
+  align-items: start;
+}
+
+.title {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 body {
   font-weight: bold;
   margin: 0;
@@ -58,6 +98,11 @@ a {
   background-color: #24242400;
   border-radius: 5px;
   padding: 0;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 button:hover,
 a:hover {
@@ -194,12 +239,6 @@ hr.divider {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #bb99ff86;
-}
-
-#gmReset {
-  width: 30px;
-  height: 30px;
-  padding-top: 2.5px;
 }
 
 #gmReset:active > svg > path {
