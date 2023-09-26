@@ -1,6 +1,7 @@
 import OBR from "@owlbear-rodeo/sdk";
+import config from "./config.json"
 
-const ID = "com.abarbre.movement_tracker";
+const ID = config.ID;
 
 export function setupContextMenu() {
   OBR.contextMenu.create({
