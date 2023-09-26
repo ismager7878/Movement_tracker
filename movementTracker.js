@@ -1,5 +1,5 @@
 import OBR from "@owlbear-rodeo/sdk";
-import config from "./config.json"
+import config from "./config.json";
 
 const ID = config.ID;
 
@@ -63,7 +63,6 @@ export async function setupMovementTracker(element) {
           if ((await OBR.player.getRole()) == "PLAYER") {
             return;
           }
-          console.log(`new distance${distance}`);
           OBR.scene.items.updateItems(
             (x) => x.id == item.id,
             (items) => {
