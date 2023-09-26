@@ -51,15 +51,20 @@ h1 {
   align-items: center;
   justify-content: space-between;
 }
-button {
+button,
+a {
   cursor: pointer;
   border: none;
   background-color: #24242400;
   border-radius: 5px;
   padding: 0;
 }
-button:hover {
+button:hover,
+a:hover {
   background-color: #5e5e5e5b;
+}
+a {
+  color: #fff;
 }
 button.spell:active > svg {
   fill: #bb99ff;
@@ -69,6 +74,9 @@ button.undo:active > svg > path {
 }
 button:active > svg > g {
   stroke: #bb99ff;
+}
+#dmSettings:active > svg > path {
+  fill: #bb99ff;
 }
 .reset {
   width: 20px;
