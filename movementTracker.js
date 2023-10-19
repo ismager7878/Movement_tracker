@@ -1,7 +1,6 @@
 import OBR from "@owlbear-rodeo/sdk";
 import config from "./config.json";
 
-
 const ID = config.ID;
 
 let renderMovementTrackerList = () => {};
@@ -18,14 +17,15 @@ const getItemIndex = (roomData, itemData) => {
 const calculateFeet = async (oldPosition, newPosition) => {
   const distance = await OBR.scene.grid.getDistance(oldPosition, newPosition);
   const scale = await OBR.scene.grid.getScale();
-  const multiplier = scale.parsed.multiplier
-  const digits = scale.parsed.digits
-  return Number((distance*multiplier).toFixed(digits))
+  const multiplier = scale.parsed.multiplier;
+  const digits = scale.parsed.digits;
+  return Number((distance * multiplier).toFixed(digits));
 };
 
 export async function setupMovementTracker(element) {
   const recordPosition = async (items) => {
     const metadata = await OBR.room.getMetadata();
+    const scale = await OBR.scene.grid.getScale();
     const roomMetadata = metadata[`${ID}/metadata`];
     if (!roomMetadata.state) {
       return;
@@ -40,7 +40,6 @@ export async function setupMovementTracker(element) {
           item.position.y != lastPosition.y
         ) {
           const distance = await calculateFeet(lastPosition, item.position);
-          console
           if (
             itemData.usedMovement + distance > itemData.speed &&
             itemData.isUndo == false &&
@@ -49,13 +48,13 @@ export async function setupMovementTracker(element) {
             OBR.notification.show(
               `${
                 item.text.plainText == "" ? item.name : item.text.plainText
-              } don't have enough movement for that, you have ${
+              } don't have enough movement for that, you have ${(
                 itemData.speed - itemData.usedMovement
-              }ft. left`,
+              ).toFixed(scale.parsed.digits)}${scale.parsed.unit}. left`,
               "WARNING"
             );
             await OBR.scene.items.updateItems(
-              (x) => x.id == item.id,
+              (x) => x.id == item.id || x.attachedTo == item.id,
               (items) => {
                 for (let i of items) {
                   i.position = lastPosition;
@@ -131,7 +130,9 @@ export async function setupMovementTracker(element) {
     for (let trackedItem of trackedItems) {
       element.innerHTML += `<div id='player'> 
                               <div class='name'>    
-                                <p style="color:${trackedItem.color}">${trackedItem.name}</p>
+                                <p style="color:${trackedItem.color}">${
+        trackedItem.name
+      }</p>
                               </div>
                               <button class="tooltip undo" id="undo${i}">
                                 <span class="tooltiptext">
@@ -161,7 +162,9 @@ export async function setupMovementTracker(element) {
                                 <span class="tooltiptext">
                                 <nobr>Using spell</nobr>
                                 </span>
-                                <svg fill=${trackedItem.spellIconColor} height="13px" width="13px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                                <svg fill=${
+                                  trackedItem.spellIconColor
+                                } height="13px" width="13px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
 	 viewBox="0 0 512 512" xml:space="preserve">
 <g>
 	<g>
@@ -181,12 +184,16 @@ export async function setupMovementTracker(element) {
 </svg>
                             </button>
                                 <div class="movement tooltip">
-                                    <p>${(trackedItem.usedMovement).toFixed(scale.parsed.digits)} /</p>
+                                    <p>${trackedItem.usedMovement.toFixed(
+                                      scale.parsed.digits
+                                    )} /</p>
                                     <div class="tooltip">
                                         <span class="tooltiptext">
                                         <nobr>Speed</nobr>
                                         </span>
-                                        <input type="number" id="input${i}" class='movementInput' value='${trackedItem.speed}'>
+                                        <input type="number" id="input${i}" class='movementInput' value='${
+        trackedItem.speed
+      }'>
                                     </div>
                                     ${unit}
                                 </div>
@@ -244,10 +251,12 @@ export async function setupMovementTracker(element) {
           );
           return;
         }
-        const itemsCall = await OBR.scene.items.getItems(
-          (item) => item.id == trackedItem.id
+        const itemsAll = await OBR.scene.items.getItems(
+          (item) =>
+            item.id == trackedItem.id || item.attachedTo == trackedItem.id
         );
-        const item = itemsCall[0];
+        const item = itemsAll.filter((x) => x.attachedTo === undefined)[0];
+
         if (item.metadata[`${ID}/metadata`].positionHistory.length <= 1) {
           OBR.notification.show(
             `You haven't moved ${
@@ -257,18 +266,24 @@ export async function setupMovementTracker(element) {
           );
           return;
         }
+        itemsAll.splice(itemsAll.indexOf(item), 1);
+
         const positionHistory = item.metadata[`${ID}/metadata`].positionHistory;
         const oldPosition = positionHistory.pop();
         const newPosition = positionHistory[positionHistory.length - 1];
         const distance = await calculateFeet(oldPosition, newPosition);
 
         OBR.scene.items.updateItems(
-          (x) => x.id == trackedItem.id,
+          (x) => x.id == trackedItem.id || x.attachedTo == trackedItem.id,
           (items) => {
             for (let i of items) {
-              i.metadata[`${ID}/metadata`].positionHistory.pop();
-              i.metadata[`${ID}/metadata`].usedMovement -= distance;
-              i.position = newPosition;
+              if (i.attachedTo === undefined) {
+                i.metadata[`${ID}/metadata`].positionHistory.pop();
+                i.metadata[`${ID}/metadata`].usedMovement -= distance;
+                i.position = newPosition;
+              } else {
+                i.position = newPosition;
+              }
             }
           }
         );
