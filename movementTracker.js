@@ -1,6 +1,7 @@
 import OBR from "@owlbear-rodeo/sdk";
 import config from "./config.json";
 
+
 const ID = config.ID;
 
 let renderMovementTrackerList = () => {};
@@ -17,7 +18,9 @@ const getItemIndex = (roomData, itemData) => {
 const calculateFeet = async (oldPosition, newPosition) => {
   const distance = await OBR.scene.grid.getDistance(oldPosition, newPosition);
   const scale = await OBR.scene.grid.getScale();
-  return Math.floor(distance * scale.parsed.multiplier);
+  const multiplier = scale.parsed.multiplier
+  const digits = scale.parsed.digits
+  return Number((distance*multiplier).toFixed(digits))
 };
 
 export async function setupMovementTracker(element) {
@@ -37,6 +40,7 @@ export async function setupMovementTracker(element) {
           item.position.y != lastPosition.y
         ) {
           const distance = await calculateFeet(lastPosition, item.position);
+          console
           if (
             itemData.usedMovement + distance > itemData.speed &&
             itemData.isUndo == false &&
@@ -177,7 +181,7 @@ export async function setupMovementTracker(element) {
 </svg>
                             </button>
                                 <div class="movement tooltip">
-                                    <p>${trackedItem.usedMovement} /</p>
+                                    <p>${(trackedItem.usedMovement).toFixed(scale.parsed.digits)} /</p>
                                     <div class="tooltip">
                                         <span class="tooltiptext">
                                         <nobr>Speed</nobr>
